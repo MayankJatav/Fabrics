@@ -18,4 +18,4 @@ class FabricDataset(Dataset):
         if self.transform:
             image = self.transform(image)
         label = self.files[idx].split('\\')[-3]
-        return image
+        return image, label
