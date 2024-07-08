@@ -27,11 +27,11 @@ class Trainer:
             )
         print(f"Using {self.device} device")
 
-    def train_one_epoch():
+    def train_one_epoch(self):
         print("Training")
         train_running_loss = 0.0
         train_running_correct = 0
-        model.train()
+        self.model.train()
         for i, data in tqdm(enumerate(self.train_loader), total=len(self.train_loader)):
             inputs, labels = data
             inputs, labels = inputs.to(self.device), labels.to(self.device)
@@ -46,9 +46,9 @@ class Trainer:
         epoch_acc = 100 * (train_running_correct / len(train_loader))
         return epoch_loss, epoch_acc
 
-    def validate_one_epoch():
+    def validate_one_epoch(self):
         print("Validation")
-        model.eval()
+        self.model.eval()
         val_running_loss = 0.0
         val_running_correct = 0
         with torch.no_grad():
@@ -63,7 +63,7 @@ class Trainer:
         epoch_acc = 100 * (val_running_correct / len(val_loader))
         return epoch_loss, epoch_acc
 
-    def train():
+    def train(self):
         for epoch in range(self.epochs):
             train_epoch_loss, train_epoch_acc = train_one_epoch()
             val_epoch_loss, val_epoch_acc = validate_one_epoch()
