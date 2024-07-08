@@ -1,5 +1,5 @@
 import glob
-import torch.utils.data import Dataset
+from torch.utils.data import Dataset
 from torchvision.io import read_image
 
 class FabricDataset(Dataset):
