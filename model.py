@@ -1,7 +1,7 @@
 import torch
 import torchvision.models as models
 
-class Model(nn.Module):
+class Model(torch.nn.Module):
     def __init__(self):
         super(Model, self).__init__()
         self.mobilenet = models.mobilenet_v2(pretrained=True)
