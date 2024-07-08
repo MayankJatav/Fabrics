@@ -1,0 +1,10 @@
+class Utilities:
+
+    def __init__(self):
+        self.classes = ['Acrylic', 'Blended', 'Chenille', 'Corduroy', 'Cotton', 'Crepe', 'Denim', 'Felt', 'Fleece', 'Leather', 'Linen', 'Lut', 'Nylon', 'Polyester', 'Satin', 'Silk', 'Suede', 'Terrycloth', 'Velvet', 'Viscose', 'Wool']
+    
+    def class_to_index(self, className):
+        return self.classes.index(className)
+
+    def index_to_class(self, index):
+        return self.classes[index]
