@@ -18,6 +18,6 @@ class Model(torch.nn.Module):
     def forward(self, input):
         x = self.feature_extractor(input)
         x = torch.nn.functional.adaptive_avg_pool2d(x, 1)
-        x = torch.flatten(x)
+        x = torch.flatten(x, 1)
         x = self.classification(x)
         return x
