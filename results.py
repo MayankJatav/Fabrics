@@ -35,22 +35,25 @@ class Results:
         with open(f"{filename}", "w") as file:
             file.write(json.dumps(data))
 
-    def save_acc_loss_graph(resultsFile, imagePath):
+    def save_acc_loss_graph(imagePath, train_acc, train_loss, val_acc, val_loss):
+        fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+        axes[0].plot(train_acc, label='Train Accuracy')
+        axes[0].plot(val_acc, label='Validation Accuracy')
+        axes[0].set_xlabel('Epochs')
+        axes[0].set_ylabel('Accuracy')
+        axes[0].legend()
+        axes[1].plot(train_loss, label='Train Loss')
+        axes[1].plot(val_loss, label='Validation Loss')
+        axes[1].set_xlabel('Epochs')
+        axes[1].set_ylabel('Loss')
+        axes[1].legend()
+        plt.savefig(imagePath)
+
+    def save_acc_loss_graph_from_file(resultsFile, imagePath):
         with open(f"{resultsFile}", "r") as file:
             data = json.load(file)
             train_acc = data['train_acc']
             train_loss = data['train_loss']
             val_acc = data['val_acc']
             val_loss = data['val_loss']
-            fig, axes = plt.subplots(1, 2, figsize=(10, 5))
-            axes[0].plot(train_acc, label='Train Accuracy')
-            axes[0].plot(val_acc, label='Validation Accuracy')
-            axes[0].set_xlabel('Epochs')
-            axes[0].set_ylabel('Accuracy')
-            axes[0].legend()
-            axes[1].plot(train_loss, label='Train Loss')
-            axes[1].plot(val_loss, label='Validation Loss')
-            axes[1].set_xlabel('Epochs')
-            axes[1].set_ylabel('Loss')
-            axes[1].legend()
-            plt.savefig(imagePath)
+            Results.save_acc_loss_graph(imagePath, train_acc, train_loss, val_acc, val_loss)
