@@ -9,7 +9,8 @@ class FabricDataset(Dataset):
     def __init__(self, path, transform=None):
         # Initialization Code Here
         self.transform = transform
-        self.files = glob.glob(path+"\\**\\**\\*.png", recursive=True)
+        self.files = glob.glob(path+"/**/**/*.png", recursive=True)
+        self.files = [s.replace("\\", "/") for s in self.files]
         self.utils = utils()
 
     def __len__(self):
@@ -21,6 +22,8 @@ class FabricDataset(Dataset):
         image = Image.open(self.files[idx])
         if self.transform:
             image = self.transform(image)
-        label = self.files[idx].split('\\')[-3]
-        label = torch.tensor(self.utils.class_to_index(label))
+        label = [0] * len(self.utils.classes)
+        className = self.files[idx].split('/')[-3]
+        label[self.utils.class_to_index(className)] = 1
+        label = torch.Tensor(label)
         return image, label

@@ -39,7 +39,7 @@ class Trainer:
             outputs = self.model(inputs)
             loss = self.loss_fn(outputs, labels)
             train_running_loss += loss.item()
-            train_running_correct = (outputs.argmax(1) == labels).sum().item()
+            train_running_correct += (outputs.argmax(1) == labels.argmax(1)).sum().item()
             loss.backward()
             self.optimizer.step()
         epoch_loss = train_running_loss / len(train_loader)
@@ -58,7 +58,7 @@ class Trainer:
                 outputs = self.model(inputs)
                 loss = self.loss_fn(outputs, labels)
                 val_running_loss += loss.item()
-                val_running_correct = (outputs.argmax(1) == labels).sum().item()
+                val_running_correct += (outputs.argmax(1) == labels).sum().item()
         epoch_loss = val_running_loss / len(val_loader)
         epoch_acc = 100 * (val_running_correct / len(val_loader))
         return epoch_loss, epoch_acc
