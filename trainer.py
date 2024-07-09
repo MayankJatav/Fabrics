@@ -43,7 +43,7 @@ class Trainer:
             loss.backward()
             self.optimizer.step()
         epoch_loss = train_running_loss / len(train_loader)
-        epoch_acc = 100 * (train_running_correct / len(train_loader))
+        epoch_acc = 100 * (train_running_correct / len(self.train_loader))
         return epoch_loss, epoch_acc
 
     def validate_one_epoch(self):
@@ -60,7 +60,7 @@ class Trainer:
                 val_running_loss += loss.item()
                 val_running_correct += (outputs.argmax(1) == labels).sum().item()
         epoch_loss = val_running_loss / len(val_loader)
-        epoch_acc = 100 * (val_running_correct / len(val_loader))
+        epoch_acc = 100 * (val_running_correct / len(self.val_loader))
         return epoch_loss, epoch_acc
 
     def train(self):
@@ -75,3 +75,4 @@ class Trainer:
             print(f"Validation loss: {val_epoch_loss:.3f}, Validation acc: {val_epoch_acc:.3f}")
             print()
         print("Training Complete")
+        return self.train_acc, self.train_loss, self.val_acc, self.val_loss
