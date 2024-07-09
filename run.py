@@ -2,6 +2,7 @@ import json
 import dataloader
 import model
 import trainer
+from results import Results as res
 import torch
 import torchvision
 from torch.utils.data import random_split
@@ -34,4 +35,5 @@ if __name__ == '__main__':
 
         train_runner = trainer.Trainer(train_model, loss_fn, optimizer, epochs, train_loader, val_loader)
         loss, acc = train_runner.train_one_epoch()
-        print(loss, acc)
+
+        res.save_acc_loss(acc, loss)
