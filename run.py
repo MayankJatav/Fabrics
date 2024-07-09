@@ -33,7 +33,5 @@ if __name__ == '__main__':
         loss_fn = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.SGD(train_model.parameters(), lr=learning_rate)
 
-        train_runner = trainer.Trainer(train_model, loss_fn, optimizer, epochs, train_loader, val_loader)
-        loss, acc = train_runner.train_one_epoch()
-
-        res.save_acc_loss(acc, loss)
+        train_runner = trainer.Trainer(train_model, loss_fn, optimizer, epochs, train_loader, val_loader, log_results=True)
+        train_runner.train()

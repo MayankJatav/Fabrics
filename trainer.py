@@ -1,10 +1,11 @@
 import torch
 import torch.optim as optim
 from tqdm.auto import tqdm
+from datetime import datetime
 
 class Trainer:
 
-    def __init__(self, model, loss_fn, optimizer, epochs, train_loader, val_loader=None, device=None):
+    def __init__(self, model, loss_fn, optimizer, epochs, train_loader, val_loader=None, device=None, log_results=False):
         self.loss_fn = loss_fn
         self.optimizer: optim.Optimizer = optimizer
         self.epochs = epochs
@@ -15,6 +16,7 @@ class Trainer:
         self.val_loss = []
         self.train_acc = []
         self.val_acc = []
+        self.log_results = log_results
 
         if device is None:
                 self.device = (
@@ -64,6 +66,12 @@ class Trainer:
         return epoch_loss, epoch_acc
 
     def train(self):
+        if self.log_results:
+            with open('config.json') as file:
+                config = json.load(file)
+            results_folder = config['results_dir']
+            now = datetime.now()
+            filename = now.strftime("%d-%m-%Y_%H-%M-%S")
         for epoch in range(self.epochs):
             train_epoch_loss, train_epoch_acc = train_one_epoch()
             val_epoch_loss, val_epoch_acc = validate_one_epoch()
@@ -71,6 +79,7 @@ class Trainer:
             self.train_acc.append(train_epoch_acc)
             self.val_loss.append(val_epoch_loss)
             self.val_acc.append(val_epoch_acc)
+            results.save_acc_loss_in_file(f"{results_folder}/{filename}.json", self.train_acc, self.train_loss, self.val_acc, self.val_loss)
             print(f"Training loss: {train_epoch_loss:.3f}, Training acc: {train_epoch_acc:.3f}")
             print(f"Validation loss: {val_epoch_loss:.3f}, Validation acc: {val_epoch_acc:.3f}")
             print()
