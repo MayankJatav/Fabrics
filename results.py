@@ -1,23 +1,30 @@
 from datetime import datetime
 import json
 import os
+import matplotlib.pyplot as plt
+from utils import Utilities as utils
 
 class Results:
     
-    def save_acc_loss(acc, loss):
+    def create_new_result_dir():
+        config = utils.get_config()
+        results_folder = config['results_dir']
         now = datetime.now()
-        filename = now.strftime("%d-%m-%Y_%H-%M-%S")
+        folder_name = now.strftime("%d-%m-%Y_%H-%M-%S")
+        if not os.path.exists(f"{results_folder}/{folder_name}"):
+            os.makedirs(f"{results_folder}/{folder_name}")
+        return f"{results_folder}/{folder_name}"
+
+    def save_acc_loss(acc, loss):
+        config = utils.get_config()
+        results_file = config['results_file']
+        folder_name = Results.create_new_result_dir()
         data = {}
         data['acc'] = acc
         data['loss'] = loss
-        with open('config.json') as file:
-            config = json.load(file)
-        results_folder = config['results_dir']
-        if not os.path.exists(results_folder):
-            os.makedirs(results_folder)
-        with open(f"{results_folder}/{filename}.json", "w") as file:
+        with open(f"{folder_name}/{results_file}", "w") as file:
             file.write(json.dumps(data))
-        print(f"Accuracy and Loss saved in {filename}.json successfully")
+        print(f"Accuracy and Loss saved in {folder_name}/results.json successfully")
 
     def save_acc_loss_in_file(filename, train_acc, train_loss, val_acc, val_loss):
         data = {}
@@ -27,3 +34,23 @@ class Results:
         data['val_loss'] = val_loss
         with open(f"{filename}", "w") as file:
             file.write(json.dumps(data))
+
+    def save_acc_loss_graph(resultsFile, imagePath):
+        with open(f"{resultsFile}", "r") as file:
+            data = json.load(file)
+            train_acc = data['train_acc']
+            train_loss = data['train_loss']
+            val_acc = data['val_acc']
+            val_loss = data['val_loss']
+            fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+            axes[0].plot(train_acc, label='Train Accuracy')
+            axes[0].plot(val_acc, label='Validation Accuracy')
+            axes[0].set_xlabel('Epochs')
+            axes[0].set_ylabel('Accuracy')
+            axes[0].legend()
+            axes[1].plot(train_loss, label='Train Loss')
+            axes[1].plot(val_loss, label='Validation Loss')
+            axes[1].set_xlabel('Epochs')
+            axes[1].set_ylabel('Loss')
+            axes[1].legend()
+            plt.savefig(imagePath)

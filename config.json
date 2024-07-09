@@ -7,5 +7,7 @@
     "learning_rate": 0.001,
     "batch_size": 8,
     "device": "cuda",
-    "results_dir": "results"
+    "results_dir": "results",
+    "results_file": "results.json",
+    "results_image": "graph.png"
 }
