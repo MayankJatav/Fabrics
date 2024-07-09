@@ -8,3 +8,8 @@ class Utilities:
 
     def index_to_class(self, index):
         return self.classes[index]
+
+    def get_config():
+        with open('config.json') as file:
+            config = json.load(file)
+            return config
