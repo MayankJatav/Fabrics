@@ -1,13 +1,14 @@
 {
     "dataset_path": "",
-    "train_size": 0.8,
-    "val_size" : 0.1,
-    "test_size" : 0.1,
+    "train_size": 0.70,
+    "val_size" : 0.15,
+    "test_size" : 0.15,
     "epochs": 1,
     "learning_rate": 0.001,
     "batch_size": 8,
     "device": "cuda",
     "results_dir": "results",
     "results_file": "results.json",
-    "results_image": "graph.png"
+    "results_image": "graph.png",
+    "save_model_file": "model"
 }

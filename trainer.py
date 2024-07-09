@@ -3,10 +3,11 @@ import torch.optim as optim
 from tqdm.auto import tqdm
 from results import Results as results
 from utils import Utilities as utils
+import os
 
 class Trainer:
 
-    def __init__(self, model, loss_fn, optimizer, epochs, train_loader, val_loader=None, device=None, log_results_file=None):
+    def __init__(self, model, loss_fn, optimizer, epochs, train_loader, val_loader=None, device=None, log_results_file=None, save_model_file=None):
         self.loss_fn = loss_fn
         self.optimizer: optim.Optimizer = optimizer
         self.epochs = epochs
@@ -18,7 +19,7 @@ class Trainer:
         self.train_acc = []
         self.val_acc = []
         self.log_results_file = log_results_file
-
+        self.save_model_file = save_model_file
         if device is None:
                 self.device = (
                 "cuda"
@@ -29,6 +30,8 @@ class Trainer:
             )
         print(f"Using {self.device} device")
         self.model = model.to(self.device)
+        if self.save_model_file:
+            torch.save(self.model, self.save_model_file + f"-epoch-{0}")
 
     def train_one_epoch(self):
         print("Training")
@@ -61,7 +64,7 @@ class Trainer:
                 outputs = self.model(inputs)
                 loss = self.loss_fn(outputs, labels)
                 val_running_loss += loss.item()
-                val_running_correct += (outputs.argmax(1) == labels).sum().item()
+                val_running_correct += (outputs.argmax(1) == labels.argmax(1)).sum().item()
         epoch_loss = val_running_loss / len(self.val_loader)
         epoch_acc = 100 * (val_running_correct / len(self.val_loader.dataset))
         return epoch_loss, epoch_acc
@@ -76,6 +79,9 @@ class Trainer:
             self.val_acc.append(val_epoch_acc)
             if self.log_results_file:
                 results.save_acc_loss_in_file(self.log_results_file, self.train_acc, self.train_loss, self.val_acc, self.val_loss)
+            if self.save_model_file:
+                os.rename(self.save_model_file + f"-epoch-{epoch}", self.save_model_file + f"-epoch-{epoch+1}")
+                torch.save(self.model, self.save_model_file + f"-epoch-{epoch+1}")
             print(f"Training loss: {train_epoch_loss:.3f}, Training acc: {train_epoch_acc:.3f}")
             print(f"Validation loss: {val_epoch_loss:.3f}, Validation acc: {val_epoch_acc:.3f}")
             print()

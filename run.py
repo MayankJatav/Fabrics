@@ -19,6 +19,7 @@ if __name__ == '__main__':
     batch_size = config['batch_size']
     results_file = config['results_file']
     results_image = config['results_image']
+    save_model_file = config['save_model_file']
     current_run_dir = results.create_new_result_dir()
 
     transform = torchvision.transforms.Compose([
@@ -36,7 +37,15 @@ if __name__ == '__main__':
     loss_fn = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(train_model.parameters(), lr=learning_rate)
 
-    train_runner = trainer.Trainer(train_model, loss_fn, optimizer, epochs, train_loader, val_loader, log_results_file=f"{current_run_dir}/{results_file}")
+    train_runner = trainer.Trainer(train_model,
+                                    loss_fn, 
+                                    optimizer, 
+                                    epochs, 
+                                    train_loader, 
+                                    val_loader, 
+                                    log_results_file=f"{current_run_dir}/{results_file}",
+                                    save_model_file=f"{current_run_dir}/{save_model_file}"
+                                    )
     result = train_runner.train()
 
     results.save_acc_loss_graph(f"{current_run_dir}/{results_image}", *result)
