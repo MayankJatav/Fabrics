@@ -36,7 +36,7 @@ class Results:
             file.write(json.dumps(data))
 
     def save_acc_loss_graph(imagePath, train_acc, train_loss, val_acc, val_loss):
-        fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+        fig, axes = plt.subplots(1, 2, figsize=(12, 5))
         axes[0].plot(train_acc, label='Train Accuracy')
         axes[0].plot(val_acc, label='Validation Accuracy')
         axes[0].set_xlabel('Epochs')

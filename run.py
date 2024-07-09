@@ -2,7 +2,7 @@ import json
 import dataloader
 import model
 import trainer
-from results import Results as res
+from results import Results as results
 from utils import Utilities as utils
 import torch
 import torchvision
@@ -17,6 +17,9 @@ if __name__ == '__main__':
     test_size = config['test_size']
     learning_rate = config['learning_rate']
     batch_size = config['batch_size']
+    results_file = config['results_file']
+    results_image = config['results_image']
+    current_run_dir = results.create_new_result_dir()
 
     transform = torchvision.transforms.Compose([
             torchvision.transforms.ToTensor(),
@@ -33,5 +36,7 @@ if __name__ == '__main__':
     loss_fn = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(train_model.parameters(), lr=learning_rate)
 
-    train_runner = trainer.Trainer(train_model, loss_fn, optimizer, epochs, train_loader, val_loader, log_results=True)
-    train_runner.train()
+    train_runner = trainer.Trainer(train_model, loss_fn, optimizer, epochs, train_loader, val_loader, log_results_file=f"{current_run_dir}/{results_file}")
+    result = train_runner.train()
+
+    results.save_acc_loss_graph(f"{current_run_dir}/{results_image}", *result)

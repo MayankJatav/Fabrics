@@ -6,7 +6,7 @@ from utils import Utilities as utils
 
 class Trainer:
 
-    def __init__(self, model, loss_fn, optimizer, epochs, train_loader, val_loader=None, device=None, log_results=False):
+    def __init__(self, model, loss_fn, optimizer, epochs, train_loader, val_loader=None, device=None, log_results_file=None):
         self.loss_fn = loss_fn
         self.optimizer: optim.Optimizer = optimizer
         self.epochs = epochs
@@ -17,7 +17,7 @@ class Trainer:
         self.val_loss = []
         self.train_acc = []
         self.val_acc = []
-        self.log_results = log_results
+        self.log_results_file = log_results_file
 
         if device is None:
                 self.device = (
@@ -45,8 +45,8 @@ class Trainer:
             train_running_correct += (outputs.argmax(1) == labels.argmax(1)).sum().item()
             loss.backward()
             self.optimizer.step()
-        epoch_loss = train_running_loss / len(train_loader)
-        epoch_acc = 100 * (train_running_correct / len(self.train_loader))
+        epoch_loss = train_running_loss / len(self.train_loader)
+        epoch_acc = 100 * (train_running_correct / len(self.train_loader.dataset))
         return epoch_loss, epoch_acc
 
     def validate_one_epoch(self):
@@ -62,23 +62,20 @@ class Trainer:
                 loss = self.loss_fn(outputs, labels)
                 val_running_loss += loss.item()
                 val_running_correct += (outputs.argmax(1) == labels).sum().item()
-        epoch_loss = val_running_loss / len(val_loader)
-        epoch_acc = 100 * (val_running_correct / len(self.val_loader))
+        epoch_loss = val_running_loss / len(self.val_loader)
+        epoch_acc = 100 * (val_running_correct / len(self.val_loader.dataset))
         return epoch_loss, epoch_acc
 
     def train(self):
-        if self.log_results:
-            config = utils.get_config()
-            results_dir = results.create_new_result_dir()
-            results_file = config['results_file']
         for epoch in range(self.epochs):
-            train_epoch_loss, train_epoch_acc = train_one_epoch()
-            val_epoch_loss, val_epoch_acc = validate_one_epoch()
+            train_epoch_loss, train_epoch_acc = self.train_one_epoch()
+            val_epoch_loss, val_epoch_acc = self.validate_one_epoch()
             self.train_loss.append(train_epoch_loss)
             self.train_acc.append(train_epoch_acc)
             self.val_loss.append(val_epoch_loss)
             self.val_acc.append(val_epoch_acc)
-            results.save_acc_loss_in_file(f"{results_dir}/{results_file}", self.train_acc, self.train_loss, self.val_acc, self.val_loss)
+            if self.log_results_file:
+                results.save_acc_loss_in_file(self.log_results_file, self.train_acc, self.train_loss, self.val_acc, self.val_loss)
             print(f"Training loss: {train_epoch_loss:.3f}, Training acc: {train_epoch_acc:.3f}")
             print(f"Validation loss: {val_epoch_loss:.3f}, Validation acc: {val_epoch_acc:.3f}")
             print()
