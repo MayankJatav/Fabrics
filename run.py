@@ -7,6 +7,7 @@ from utils import Utilities as utils
 import torch
 import torchvision
 from torch.utils.data import random_split
+from torchsummary import summary
 
 if __name__ == '__main__':
     config = utils.get_config()
@@ -34,6 +35,8 @@ if __name__ == '__main__':
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
     
     train_model = model.Model()
+    print(train_model)
+    summary(train_model)
     loss_fn = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(train_model.parameters(), lr=learning_rate)
 
