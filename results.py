@@ -24,7 +24,7 @@ class Results:
         data['loss'] = loss
         with open(f"{folder_name}/{results_file}", "w") as file:
             file.write(json.dumps(data))
-        print(f"Accuracy and Loss saved in {folder_name}/results.json successfully")
+        print(f"Accuracy and Loss saved in {folder_name}/{results_file} successfully")
 
     def save_acc_loss_in_file(filename, train_acc, train_loss, val_acc, val_loss):
         data = {}
