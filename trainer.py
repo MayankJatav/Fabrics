@@ -10,7 +10,6 @@ class Trainer:
         self.epochs = epochs
         self.train_loader = train_loader
         self.val_loader = val_loader
-        self.model = model
         self.device = device
         self.train_loss = []
         self.val_loss = []
@@ -26,6 +25,7 @@ class Trainer:
                 else "cpu"
             )
         print(f"Using {self.device} device")
+        self.model = model.to(self.device)
 
     def train_one_epoch(self):
         print("Training")
