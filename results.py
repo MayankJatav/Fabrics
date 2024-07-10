@@ -57,3 +57,21 @@ class Results:
             val_acc = data['val_acc']
             val_loss = data['val_loss']
             Results.save_acc_loss_graph(imagePath, train_acc, train_loss, val_acc, val_loss)
+
+    def combine_results(file1_path, file2_path):
+        with open(file1_path, 'r') as file1:
+            data1 = json.load(file1)
+        with open(file2_path, 'r') as file2:
+            data2 = json.load(file2)
+        combined_data = {}
+        for key in data1.keys():
+            val1 = data1[key]
+            val2 = data2[key]
+            val = val1 + val2
+            combined_data[key] = val
+        return combined_data
+
+    def combine_and_save_results(result1_path, result2_path, save_path):
+        with open(save_path, 'w') as output_file:
+            combined_data = Results.combine_results(result1_path, result2_path)
+            js = json.dump(combined_data, output_file, indent=4)
