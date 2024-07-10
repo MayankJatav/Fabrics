@@ -1,6 +1,7 @@
 import json
 import dataloader
-import model
+from models.InceptionModel import InceptionModel
+from models.MobileNetModel import MobileNetModel
 import trainer
 from results import Results as results
 from utils import Utilities as utils
@@ -35,7 +36,7 @@ if __name__ == '__main__':
     val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
     
-    train_model = model.Model()
+    train_model = MobileNetModel(pretrained=True)
     if saved_weights:
         print("Loading Saved Weights:", saved_weights)
         train_model.load_state_dict(torch.load(saved_weights).state_dict())

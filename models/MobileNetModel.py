@@ -1,10 +1,10 @@
 import torch
 import torchvision.models as models
 
-class Model(torch.nn.Module):
-    def __init__(self):
-        super(Model, self).__init__()
-        self.mobilenet = models.mobilenet_v2(pretrained=True)
+class MobileNetModel(torch.nn.Module):
+    def __init__(self, pretrained=False):
+        super(MobileNetModel, self).__init__()
+        self.mobilenet = models.mobilenet_v2(pretrained=pretrained)
         self.feature_extractor = self.mobilenet.features
         self.classification = torch.nn.Sequential(
             torch.nn.Linear(1280, 320),
