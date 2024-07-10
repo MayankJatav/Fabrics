@@ -71,6 +71,7 @@ class Trainer:
 
     def train(self):
         for epoch in range(self.epochs):
+            print(f"[INFO]: Epoch {epoch+1} of {self.epochs}")
             train_epoch_loss, train_epoch_acc = self.train_one_epoch()
             val_epoch_loss, val_epoch_acc = self.validate_one_epoch()
             self.train_loss.append(train_epoch_loss)
