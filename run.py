@@ -21,6 +21,7 @@ if __name__ == '__main__':
     results_file = config['results_file']
     results_image = config['results_image']
     save_model_file = config['save_model_file']
+    saved_weights = config['saved_weights']
     current_run_dir = results.create_new_result_dir()
 
     transform = torchvision.transforms.Compose([
@@ -35,8 +36,11 @@ if __name__ == '__main__':
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
     
     train_model = model.Model()
-    print(train_model)
-    summary(train_model, (3, 224, 224))
+    print("saved Wights -----------------", saved_weights)
+    if saved_weights:
+        train_model.load_state_dict(torch.load(saved_weights))
+    # print(train_model)
+    # summary(train_model, (3, 224, 224))
     loss_fn = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(train_model.parameters(), lr=learning_rate)
 
