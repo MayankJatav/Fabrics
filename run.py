@@ -36,7 +36,7 @@ if __name__ == '__main__':
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
     
     train_model = model.Model()
-    print("saved Wights -----------------", saved_weights)
+    print("saved Weights -----------------", saved_weights)
     if saved_weights:
         train_model.load_state_dict(torch.load(saved_weights).state_dict())
     # print(train_model)
