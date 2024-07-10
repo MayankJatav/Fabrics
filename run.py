@@ -38,7 +38,7 @@ if __name__ == '__main__':
     train_model = model.Model()
     print("saved Wights -----------------", saved_weights)
     if saved_weights:
-        train_model.load_state_dict(torch.load(saved_weights))
+        train_model.load_state_dict(torch.load(saved_weights).state_dict())
     # print(train_model)
     # summary(train_model, (3, 224, 224))
     loss_fn = torch.nn.CrossEntropyLoss()
