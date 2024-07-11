@@ -1,7 +1,7 @@
 import torch
 import torchvision.models as models
 
-class InceptionModel(models.Inception3):
+class InceptionModel(torch.nn.Module):
     def __init__(self, pretrained=False):
         super(InceptionModel, self).__init__()
         self.inception = models.inception_v3(pretrained=pretrained)
@@ -17,5 +17,9 @@ class InceptionModel(models.Inception3):
         )
 
     def forward(self, input):
-        x = self.inception(input)
+        if self.training:
+            x = self.inception(input)[0]
+        else:
+            x = self.inception(input)
+        print("Shape", input.shape, x.shape)
         return x
