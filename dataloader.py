@@ -22,6 +22,7 @@ class FabricDataset(Dataset):
         image = Image.open(self.files[idx])
         if self.transform:
             image = self.transform(image)
+        image = image / torch.max(image)
         label = [0] * len(self.utils.classes)
         className = self.files[idx].split('/')[-3]
         label[self.utils.class_to_index(className)] = 1
