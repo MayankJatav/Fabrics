@@ -6,6 +6,8 @@
     "epochs": 30,
     "learning_rate": 0.001,
     "batch_size": 8,
+    "model_input_shape": [299, 299],
+    "model_name" : "inceptionv3",
     "device": "cuda",
     "saved_weights": null,
     "results_dir": "results",

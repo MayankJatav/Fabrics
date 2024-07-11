@@ -23,11 +23,13 @@ if __name__ == '__main__':
     results_image = config['results_image']
     save_model_file = config['save_model_file']
     saved_weights = config['saved_weights']
+    model_input_shape = tuple(config['model_input_shape'])
+    model_name = config['model_name']
     current_run_dir = results.create_new_result_dir()
 
     transform = torchvision.transforms.Compose([
             torchvision.transforms.ToTensor(),
-            torchvision.transforms.Resize((224, 224))
+            torchvision.transforms.Resize(model_input_shape)
         ])
 
     dataset = dataloader.FabricDataset(dataset_path, transform)
@@ -36,12 +38,15 @@ if __name__ == '__main__':
     val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
     
-    train_model = MobileNetModel(pretrained=True)
+    if model_name is "mobilenet":
+        train_model = MobileNetModel(pretrained=True)
+    if model_name is "inceptionv3":
+        train_model = InceptionModel(pretrained=True)
     if saved_weights:
         print("Loading Saved Weights:", saved_weights)
         train_model.load_state_dict(torch.load(saved_weights).state_dict())
     # print(train_model)
-    # summary(train_model, (3, 224, 224))
+    # summary(train_model, (3, model_input_shape[0], model_input_shape[1]))
     loss_fn = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(train_model.parameters(), lr=learning_rate)
 
