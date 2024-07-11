@@ -44,7 +44,7 @@ class InceptionModel(models.Inception3):
             torch.nn.Linear(89401, 2048),
             torch.nn.ReLU()
         )
-        self.device = next(self.parameters()).device
+
 
     def forward_inception(self, x):
         # N x 3 x 299 x 299
@@ -103,8 +103,9 @@ class InceptionModel(models.Inception3):
         vertical, horizontal = self.preprocess_input(input.detach().cpu().numpy())
         vertical = torch.unsqueeze(torch.from_numpy(vertical), 1)
         horizontal = torch.unsqueeze(torch.from_numpy(horizontal), 1)
-        vertical = vertical.to(self.device)
-        horizontal = horizontal.to(self.device)
+        device = next(self.parameters()).device
+        vertical = vertical.to(device)
+        horizontal = horizontal.to(device)
         vertical = self.conv_vertical(vertical)
         vertical = torch.flatten(vertical, 1)
         vertical = self.vertical_fc(vertical)
