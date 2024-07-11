@@ -21,5 +21,4 @@ class InceptionModel(torch.nn.Module):
             x = self.inception(input)[0]
         else:
             x = self.inception(input)
-        print("Shape", input.shape, x.shape)
         return x
