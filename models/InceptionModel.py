@@ -6,8 +6,6 @@ import numpy as np
 class InceptionModel(models.Inception3):
     def __init__(self, pretrained=False):
         super(InceptionModel, self).__init__()
-        # self.inception = models.inception_v3(pretrained=pretrained)
-        # self.inception.fc 
         self.fc_layer= torch.nn.Sequential(
             torch.nn.Linear(6144, 2048),
             torch.nn.ReLU(),
@@ -17,8 +15,8 @@ class InceptionModel(models.Inception3):
             torch.nn.ReLU(),
             torch.nn.Linear(320, 80),
             torch.nn.ReLU(),
-            torch.nn.Linear(80, 21),
-            torch.nn.Softmax(),
+            torch.nn.Linear(80, 35),
+            torch.nn.ReLU(),
         )
         self.conv_vertical = torch.nn.Sequential(
             torch.nn.Conv2d(1, 8, kernel_size=3, padding='same'),
