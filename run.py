@@ -47,7 +47,7 @@ if __name__ == '__main__':
         train_model.load_state_dict(torch.load(saved_weights).state_dict())
     # print(train_model)
     # summary(train_model, (3, model_input_shape[0], model_input_shape[1]))
-    loss_fn = torch.nn.CrossEntropyLoss()
+    loss_fn = torch.nn.L1Loss()
     optimizer = torch.optim.SGD(train_model.parameters(), lr=learning_rate)
 
     train_runner = trainer.Trainer(train_model,
