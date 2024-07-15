@@ -38,11 +38,15 @@ class InceptionModel(torch.nn.Module):
         )
         self.avgpool = torch.nn.AdaptiveAvgPool2d((1, 1))
         self.fc_layer= torch.nn.Sequential(
-            torch.nn.Linear(352, 176),
+            torch.nn.Linear(832, 416),
             torch.nn.ReLU(),
-            torch.nn.Linear(176, 88),
+            torch.nn.Linear(416, 208),
             torch.nn.ReLU(),
-            torch.nn.Linear(88, 35),
+            torch.nn.Linear(208, 104),
+            torch.nn.ReLU(),
+            torch.nn.Linear(104, 70),
+            torch.nn.ReLU(),
+            torch.nn.Linear(70, 35),
             torch.nn.ReLU()
         )
         
@@ -84,9 +88,11 @@ class InceptionModel(torch.nn.Module):
 class Inception3(torch.nn.Module):
     def __init__(self):
         super().__init__()
-        inception_blocks = [BasicConv2d, InceptionA]
+        inception_blocks = [BasicConv2d, InceptionA, InceptionB, InceptionC]
         conv_block = inception_blocks[0]
         inception_a = inception_blocks[1]
+        inception_b = inception_blocks[2]
+        inception_c = inception_blocks[3]
 
         self.Conv2d_1a_3x3 = conv_block(3, 32, kernel_size=3, stride=2)
         self.Conv2d_2a_3x3 = conv_block(32, 32, kernel_size=3)
@@ -98,6 +104,11 @@ class Inception3(torch.nn.Module):
         self.Mixed_5b = inception_a(192, pool_features=32)
         self.Mixed_5c = inception_a(256, pool_features=64)
         self.Mixed_5d = inception_a(288, pool_features=64)
+        self.Mixed_6a = inception_b(288)
+        self.Mixed_6b = inception_c(768, channels_7x7=128)
+        self.Mixed_6c = inception_c(768, channels_7x7=160)
+        self.Mixed_6d = inception_c(768, channels_7x7=160)
+        self.Mixed_6e = inception_c(768, channels_7x7=192)
         self.avgpool = torch.nn.AdaptiveAvgPool2d((1, 1))
 
     def forward(self, x):
@@ -122,9 +133,19 @@ class Inception3(torch.nn.Module):
         # N x 288 x 35 x 35
         x = self.Mixed_5d(x)
         # N x 288 x 35 x 35
+        x = self.Mixed_6a(x)
+        # N x 768 x 17 x 17
+        x = self.Mixed_6b(x)
+        # N x 768 x 17 x 17
+        x = self.Mixed_6c(x)
+        # N x 768 x 17 x 17
+        x = self.Mixed_6d(x)
+        # N x 768 x 17 x 17
+        x = self.Mixed_6e(x)
+        # N x 768 x 17 x 17
         # Adaptive average pooling
         x = self.avgpool(x)
-        # N x 288 x 1 x 1
+        # N x 768 x 1 x 1
         x = torch.flatten(x, 1)
         return x
 
@@ -164,6 +185,78 @@ class InceptionA(torch.nn.Module):
         return outputs
 
     def forward(self, x: torch.Tensor):
+        outputs = self._forward(x)
+        return torch.cat(outputs, 1)
+
+class InceptionB(torch.nn.Module):
+    def __init__(self, in_channels: int, conv_block = None):
+        super().__init__()
+        if conv_block is None:
+            conv_block = BasicConv2d
+        self.branch3x3 = conv_block(in_channels, 384, kernel_size=3, stride=2)
+
+        self.branch3x3dbl_1 = conv_block(in_channels, 64, kernel_size=1)
+        self.branch3x3dbl_2 = conv_block(64, 96, kernel_size=3, padding=1)
+        self.branch3x3dbl_3 = conv_block(96, 96, kernel_size=3, stride=2)
+
+    def _forward(self, x):
+        branch3x3 = self.branch3x3(x)
+
+        branch3x3dbl = self.branch3x3dbl_1(x)
+        branch3x3dbl = self.branch3x3dbl_2(branch3x3dbl)
+        branch3x3dbl = self.branch3x3dbl_3(branch3x3dbl)
+
+        branch_pool = F.max_pool2d(x, kernel_size=3, stride=2)
+
+        outputs = [branch3x3, branch3x3dbl, branch_pool]
+        return outputs
+
+    def forward(self, x):
+        outputs = self._forward(x)
+        return torch.cat(outputs, 1)
+
+class InceptionC(torch.nn.Module):
+    def __init__(
+        self, in_channels: int, channels_7x7: int, conv_block = None
+    ):
+        super().__init__()
+        if conv_block is None:
+            conv_block = BasicConv2d
+        self.branch1x1 = conv_block(in_channels, 192, kernel_size=1)
+
+        c7 = channels_7x7
+        self.branch7x7_1 = conv_block(in_channels, c7, kernel_size=1)
+        self.branch7x7_2 = conv_block(c7, c7, kernel_size=(1, 7), padding=(0, 3))
+        self.branch7x7_3 = conv_block(c7, 192, kernel_size=(7, 1), padding=(3, 0))
+
+        self.branch7x7dbl_1 = conv_block(in_channels, c7, kernel_size=1)
+        self.branch7x7dbl_2 = conv_block(c7, c7, kernel_size=(7, 1), padding=(3, 0))
+        self.branch7x7dbl_3 = conv_block(c7, c7, kernel_size=(1, 7), padding=(0, 3))
+        self.branch7x7dbl_4 = conv_block(c7, c7, kernel_size=(7, 1), padding=(3, 0))
+        self.branch7x7dbl_5 = conv_block(c7, 192, kernel_size=(1, 7), padding=(0, 3))
+
+        self.branch_pool = conv_block(in_channels, 192, kernel_size=1)
+
+    def _forward(self, x):
+        branch1x1 = self.branch1x1(x)
+
+        branch7x7 = self.branch7x7_1(x)
+        branch7x7 = self.branch7x7_2(branch7x7)
+        branch7x7 = self.branch7x7_3(branch7x7)
+
+        branch7x7dbl = self.branch7x7dbl_1(x)
+        branch7x7dbl = self.branch7x7dbl_2(branch7x7dbl)
+        branch7x7dbl = self.branch7x7dbl_3(branch7x7dbl)
+        branch7x7dbl = self.branch7x7dbl_4(branch7x7dbl)
+        branch7x7dbl = self.branch7x7dbl_5(branch7x7dbl)
+
+        branch_pool = F.avg_pool2d(x, kernel_size=3, stride=1, padding=1)
+        branch_pool = self.branch_pool(branch_pool)
+
+        outputs = [branch1x1, branch7x7, branch7x7dbl, branch_pool]
+        return outputs
+
+    def forward(self, x):
         outputs = self._forward(x)
         return torch.cat(outputs, 1)
     
