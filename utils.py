@@ -8,7 +8,7 @@ class Utilities:
         return classes.index(className)
 
     def index_to_class(index):
-        return self.classes[index]
+        return classes[index]
 
     def get_classes():
         return classes
