@@ -1,5 +1,6 @@
 import json
 import dataloader
+from models.DeitModel import DeiTModel
 from models.InceptionModel import InceptionModel
 from models.MobileNetModel import MobileNetModel
 import trainer
@@ -38,16 +39,17 @@ if __name__ == '__main__':
     val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
     
-    if model_name == "mobilenet":
-        train_model = MobileNetModel(pretrained=True)
-    if model_name == "inceptionv3":
-        train_model = InceptionModel(pretrained=True)
+    # if model_name == "mobilenet":
+    #     train_model = MobileNetModel(pretrained=True)
+    # if model_name == "inceptionv3":
+    #     train_model = InceptionModel(pretrained=True)
+    train_model = DeiTModel(pretrained=True)
     if saved_weights:
         print("Loading Saved Weights:", saved_weights)
         train_model.load_state_dict(torch.load(saved_weights).state_dict())
     # print(train_model)
     # summary(train_model, (3, model_input_shape[0], model_input_shape[1]))
-    loss_fn = torch.nn.L1Loss()
+    loss_fn = torch.nn.BCELoss()
     optimizer = torch.optim.SGD(train_model.parameters(), lr=learning_rate)
 
     train_runner = trainer.Trainer(train_model,
