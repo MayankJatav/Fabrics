@@ -1,6 +1,6 @@
 import json
 
-classes = ['Acetate', 'Acrylic', 'Angora', 'Cashmere', 'Chenille cotton', 'Cotton', 'Dralon', 'Elastane', 'Erion', 'Fleece', 'LI', 'Leather', 'Linen', 'Lut', 'Lycra', 'Metallic fibers', 'Micropoly', 'Modal', 'Naylon', 'Nylon', 'PES', 'Polyamide', 'Polyester', 'RAY', 'Rayon', 'Repreve', 'SP', 'Saduk Silk', 'Satin Silk', 'Silk', 'Spandex', 'Supplex Nylon', 'Synthetic', 'Viscose', 'Wool']
+classes = ['Acrylic', 'Blended', 'Chenille', 'Corduroy', 'Cotton', 'Crepe', 'Denim', 'Felt', 'Fleece', 'Leather', 'Linen', 'Lut', 'Nylon', 'Polyester', 'Satin', 'Silk', 'Suede', 'Terrycloth', 'Velvet', 'Viscose', 'Wool']
 
 class Utilities:
 
