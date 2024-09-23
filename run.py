@@ -4,6 +4,7 @@ from models.DeitModel import DeiTModel
 from models.InceptionModel import InceptionModel
 from models.MobileNetModel import MobileNetModel
 import trainer
+from models.MobileVIT import MobileVIT
 from results import Results as results
 from utils import Utilities as utils
 import torch
@@ -44,6 +45,7 @@ if __name__ == '__main__':
     # if model_name == "inceptionv3":
     #     train_model = InceptionModel(pretrained=True)
     train_model = DeiTModel(pretrained=True)
+    train_model = MobileVIT()
     if saved_weights:
         print("Loading Saved Weights:", saved_weights)
         train_model.load_state_dict(torch.load(saved_weights).state_dict())
