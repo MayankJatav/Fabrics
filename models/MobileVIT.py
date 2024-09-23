@@ -1,10 +1,10 @@
 import torch
-from transformers import MobileViTFeatureExtractor, MobileViTForImageClassification
+from transformers import MobileViTImageProcessor, MobileViTForImageClassification
 
 class MobileVIT(torch.nn.Module):
     def __init__(self):
         super(MobileVIT, self).__init__()
-        self.feature_extractor = MobileViTFeatureExtractor.from_pretrained("apple/mobilevit-small")
+        self.feature_extractor = MobileViTImageProcessor.from_pretrained("apple/mobilevit-small")
         self.model = MobileViTForImageClassification.from_pretrained("apple/mobilevit-small")
         self.model.classifier = torch.nn.Sequential(
             torch.nn.Linear(640, 21),
