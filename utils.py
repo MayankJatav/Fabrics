@@ -1,6 +1,6 @@
 import json
 
-classes = ['Acrylic', 'Blended', 'Chenille', 'Corduroy', 'Cotton', 'Crepe', 'Denim', 'Felt', 'Fleece', 'Leather', 'Linen', 'Lut', 'Nylon', 'Polyester', 'Satin', 'Silk', 'Suede', 'Terrycloth', 'Velvet', 'Viscose', 'Wool']
+classes = ['Blended', 'Cotton', 'Denim', 'Polyester', 'Wool']
 
 class Utilities:
 
