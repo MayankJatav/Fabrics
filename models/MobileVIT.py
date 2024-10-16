@@ -9,8 +9,8 @@ class MobileVIT(torch.nn.Module):
         self.feature_extractor = MobileViTFeatureExtractor.from_pretrained("./cache/Tokenizer/MobileViTModel")
         self.model = MobileViTForImageClassification.from_pretrained("./cache/model/MobileViTModel")
         self.model.classifier = torch.nn.Sequential(
-            torch.nn.Linear(640, 21),
-            torch.nn.Softmax(),
+            torch.nn.Linear(640, 5),
+            torch.nn.Softmax()
         )
 
     def forward(self, input):

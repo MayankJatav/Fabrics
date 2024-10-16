@@ -6,8 +6,8 @@ class DeiTModel(torch.nn.Module):
         super(DeiTModel, self).__init__()
         self.model = timm.create_model('deit_base_patch16_224', pretrained=pretrained)
         self.model.head = torch.nn.Sequential(
-            torch.nn.Linear(768, 21),
-            torch.nn.Softmax(),
+            torch.nn.Linear(768, 5),
+            torch.nn.Softmax()
         )
 
     def forward(self, input):

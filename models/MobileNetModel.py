@@ -7,12 +7,8 @@ class MobileNetModel(torch.nn.Module):
         self.mobilenet = models.mobilenet_v2(pretrained=pretrained)
         self.feature_extractor = self.mobilenet.features
         self.classification = torch.nn.Sequential(
-            torch.nn.Linear(1280, 320),
-            torch.nn.ReLU(),
-            torch.nn.Linear(320, 80),
-            torch.nn.ReLU(),
-            torch.nn.Linear(80, 21),
-            torch.nn.Softmax(),
+            torch.nn.Linear(1280, 5),
+            torch.nn.Softmax()
         )
 
     def forward(self, input):
