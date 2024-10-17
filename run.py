@@ -44,7 +44,7 @@ if __name__ == '__main__':
         train_model = MobileNetModel(pretrained=True)
     if model_name == "inceptionv3":
         train_model = InceptionModel(pretrained=True)
-    if model_name == "deti":
+    if model_name == "deit":
         train_model = DeiTModel(pretrained=True)
     if model_name == "mobilevit":
         train_model = MobileVIT()
