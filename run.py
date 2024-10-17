@@ -27,6 +27,7 @@ if __name__ == '__main__':
     saved_weights = config['saved_weights']
     model_input_shape = tuple(config['model_input_shape'])
     model_name = config['model_name']
+    device = config['device']
     current_run_dir = results.create_new_result_dir()
 
     transform = torchvision.transforms.Compose([
@@ -47,7 +48,7 @@ if __name__ == '__main__':
     if model_name == "deit":
         train_model = DeiTModel(pretrained=True)
     if model_name == "mobilevit":
-        train_model = MobileVIT()
+        train_model = MobileVIT(device=device)
     if saved_weights:
         print("Loading Saved Weights:", saved_weights)
         train_model.load_state_dict(torch.load(saved_weights).state_dict())
