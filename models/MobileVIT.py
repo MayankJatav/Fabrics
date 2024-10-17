@@ -1,5 +1,5 @@
 import torch
-from transformers import MobileViTImageProcessor, MobileViTForImageClassification
+from transformers import MobileViTImageProcessor, MobileViTForImageClassification, MobileViTFeatureExtractor
 
 class MobileVIT(torch.nn.Module):
     def __init__(self):
