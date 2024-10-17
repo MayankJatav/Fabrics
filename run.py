@@ -45,9 +45,9 @@ if __name__ == '__main__':
     if model_name == "inceptionv3":
         train_model = InceptionModel(pretrained=True)
     if model_name == "deti":
-    train_model = DeiTModel(pretrained=True)
+        train_model = DeiTModel(pretrained=True)
     if model_name == "mobilevit":
-    train_model = MobileVIT()
+        train_model = MobileVIT()
     if saved_weights:
         print("Loading Saved Weights:", saved_weights)
         train_model.load_state_dict(torch.load(saved_weights).state_dict())
