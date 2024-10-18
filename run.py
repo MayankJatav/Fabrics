@@ -3,6 +3,7 @@ import dataloader
 from models.DeitModel import DeiTModel
 from models.InceptionModel import InceptionModel
 from models.MobileNetModel import MobileNetModel
+from models.VGG16 import VGG16
 import trainer
 from models.MobileVIT import MobileVIT
 from results import Results as results
@@ -49,6 +50,8 @@ if __name__ == '__main__':
         train_model = DeiTModel(pretrained=True)
     if model_name == "mobilevit":
         train_model = MobileVIT(device=device)
+    if model_name == "vgg16":
+        train_model = VGG16(pretrained=True)
     if saved_weights:
         print("Loading Saved Weights:", saved_weights)
         train_model.load_state_dict(torch.load(saved_weights).state_dict())
