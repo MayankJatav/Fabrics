@@ -26,14 +26,18 @@ class Results:
             file.write(json.dumps(data))
         print(f"Accuracy and Loss saved in {folder_name}/{results_file} successfully")
 
-    def save_acc_loss_in_file(filename, train_acc, train_loss, val_acc, val_loss):
+    def save_acc_loss_precision_recall_in_file(filename, train_acc, train_loss, train_precision, train_recall, val_acc, val_loss, val_precision, val_recall):
         data = {}
         data['train_acc'] = train_acc
         data['train_loss'] = train_loss
+        data['train_precision'] = train_precision
+        data['train_recall'] = train_recall
         data['val_acc'] = val_acc
         data['val_loss'] = val_loss
+        data['val_precision'] = val_precision
+        data['val_recall'] = val_recall
         with open(f"{filename}", "w") as file:
-            file.write(json.dumps(data))
+            file.write(json.dumps(data, indent=4))
 
     def save_acc_loss_graph(imagePath, train_acc, train_loss, val_acc, val_loss):
         fig, axes = plt.subplots(1, 2, figsize=(12, 5))
