@@ -45,7 +45,7 @@ if __name__ == '__main__':
         dataset = dataloader.FabricOCTDataset(dataset_path, transform)
     else:
         assert False, "Dataset name should be either FabricsDataset or FabricsOCTDataset"
-    train_dataset, _, val_dataset = random_split(dataset, [train_size, 0.98, val_size])
+    train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
