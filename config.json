@@ -1,6 +1,6 @@
 {
-    "dataset_name": "FabricsDataset",
-    "dataset_path": "../FabricsDataset",
+    "dataset_name": "FabricsOCTDataset",
+    "dataset_path": "../FabricOCTData/",
     "train_size": 0.80,
     "val_size" : 0.20,
     "epochs": 30,
