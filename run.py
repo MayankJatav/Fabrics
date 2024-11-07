@@ -13,6 +13,7 @@ from torchsummary import summary
 if __name__ == '__main__':
     config = utils.get_config()
     dataset_path = config['dataset_path']
+    dataset_name = config['dataset_name']
     epochs = config['epochs']
     train_size = config['train_size']
     val_size = config['val_size']
@@ -32,7 +33,12 @@ if __name__ == '__main__':
             torchvision.transforms.Resize(model_input_shape)
         ])
 
-    dataset = dataloader.FabricDataset(dataset_path, transform)
+    if dataset_name.lower() == "FabricsDataset".lower():
+        dataset = dataloader.FabricDataset(dataset_path, transform)
+    elif dataset_name.lower() == "FabricsOCTDataset".lower():
+        dataset = dataloader.FabricOCTDataset(dataset_path, transform)
+    else:
+        assert False, "Dataset name should be either FabricsDataset or FabricsOCTDataset"
     train_dataset, val_dataset, test_dataset = random_split(dataset, [train_size, val_size, test_size])
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
