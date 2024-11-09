@@ -32,7 +32,7 @@ if __name__ == '__main__':
     model_input_shape = tuple(config['model_input_shape'])
     model_name = config['model_name']
     device = config['device']
-    current_run_dir = model_name+"_"+results.create_new_result_dir()
+    current_run_dir = results.create_new_result_dir()
 
     transform = torchvision.transforms.Compose([
             torchvision.transforms.ToTensor(),
