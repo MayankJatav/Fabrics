@@ -20,7 +20,6 @@ if __name__ == '__main__':
     epochs = config['epochs']
     train_size = config['train_size']
     val_size = config['val_size']
-    test_size = config['test_size']
     learning_rate = config['learning_rate']
     batch_size = config['batch_size']
     results_file = config['results_file']
@@ -43,10 +42,9 @@ if __name__ == '__main__':
         dataset = dataloader.FabricOCTDataset(dataset_path, transform)
     else:
         assert False, "Dataset name should be either FabricsDataset or FabricsOCTDataset"
-    train_dataset, val_dataset, test_dataset = random_split(dataset, [train_size, val_size, test_size])
+    train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
-    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
     
     if model_name == "mobilenet":
         train_model = MobileNetModel(pretrained=True)
