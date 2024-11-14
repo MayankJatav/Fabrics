@@ -1,6 +1,6 @@
 import json
 
-classes = ['Blended', 'Cotton', 'Denim', 'Polyester', 'Wool']
+classes = ['Cotton', 'Polyester', 'Wool']
 
 class Utilities:
 
