@@ -4,6 +4,8 @@ from torch.utils.data import Dataset
 from torchvision.io import read_image
 from utils import Utilities as utils
 from PIL import Image
+import numpy as np
+import cv2
 
 class FabricDataset(Dataset):
     def __init__(self, path, transform=None):
