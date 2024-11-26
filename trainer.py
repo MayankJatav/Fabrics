@@ -49,7 +49,7 @@ class Trainer:
             inputs, labels = data
             inputs, labels = inputs.to(self.device), labels.to(self.device)
             self.optimizer.zero_grad()
-            outputs = self.model(inputs)
+            outputs = self.model(inputs).logits
             loss = self.loss_fn(outputs, labels)
             train_running_loss += loss.item()
             train_running_correct += (outputs.argmax(1) == labels.argmax(1)).sum().item()
@@ -74,7 +74,7 @@ class Trainer:
             for i, data in tqdm(enumerate(self.val_loader), total=len(self.val_loader)):
                 inputs, labels = data
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
-                outputs = self.model(inputs)
+                outputs = self.model(inputs).logits
                 loss = self.loss_fn(outputs, labels)
                 val_running_loss += loss.item()
                 val_running_correct += (outputs.argmax(1) == labels.argmax(1)).sum().item()
