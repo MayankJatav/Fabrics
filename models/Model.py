@@ -117,18 +117,19 @@ class Model(nn.Module):
     def forward(self, x):
         input_shape = x.shape
 
+        device = x.device
         x = x / torch.max(x)
         
         x1 = self.conv1(x)
-        x1 = torch.tensor(self.create_patches(x1.permute(0, 2, 3, 1).detach().numpy(), self.patch_shape)).flatten(2)
+        x1 = torch.tensor(self.create_patches(x1.permute(0, 2, 3, 1).cpu().detach().numpy(), self.patch_shape)).flatten(2).to(device)
         x1 = self.mha1(x1)
 
         x2 = self.conv2(x)
-        x2 = torch.tensor(self.create_patches(x2.permute(0, 2, 3, 1).detach().numpy(), self.patch_shape)).flatten(2)
+        x2 = torch.tensor(self.create_patches(x2.permute(0, 2, 3, 1).cpu().detach().numpy(), self.patch_shape)).flatten(2).to(device)
         x2 = self.mha2(x2)
         
         x3 = self.conv3(x)
-        x3 = torch.tensor(self.create_patches(x3.permute(0, 2, 3, 1).detach().numpy(), self.patch_shape)).flatten(2)
+        x3 = torch.tensor(self.create_patches(x3.permute(0, 2, 3, 1).cpu().detach().numpy(), self.patch_shape)).flatten(2).to(device)
         x3 = self.mha3(x3)
 
         x = x1 + x2 + x3
