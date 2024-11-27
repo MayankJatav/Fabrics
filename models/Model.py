@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from patchify import patchify
 
 class MultiHeadAttention(nn.Module):
     def __init__(self, d_model, num_heads):
@@ -53,14 +54,19 @@ class ConvolutionalBlockOut(nn.Module):
         self.conv2 = nn.Conv2d(8, 16, 3)
         self.conv3 = nn.Conv2d(16, 32, 3)
         self.conv4 = nn.Conv2d(32, 64, 3)
-        self.max_pool = nn.AdaptiveAvgPool2d(1)
+        self.global_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(64, 3)
+        self.softmax = nn.Softmax()
 
     def forward(self, x):
         x = self.conv1(x)
         x = self.conv2(x)
         x = self.conv3(x)
         x = self.conv4(x)
-        x = self.max_pool(x)
+        x = self.global_avg_pool(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        x = self.softmax(x)
         return x
 
 class MultiHeadAttentionBlock(nn.Module):
@@ -92,29 +98,42 @@ class Model(nn.Module):
         self.mha3 = MultiHeadAttentionBlock(self.patch_shape, out_channels, d_model, num_heads)
 
         self.conv_out = ConvolutionalBlockOut()
-        self.fc = nn.Linear(128, 3)
 
         self.num_heads = num_heads
 
+    def create_patches(self, image, shape):
+        shape = (image.shape[0],) + shape + (image.shape[3],)
+        patches = patchify(image, shape, step=shape[1])[0]
+
+        p = [[] for i in range(shape[0])]
+        for i in patches:
+            for j in i:
+                j = j[0]
+                for k in range(shape[0]):
+                    p[k].append(j[k])
+
+        return p
+    
     def forward(self, x):
         input_shape = x.shape
+
+        x = x / torch.max(x)
         
         x1 = self.conv1(x)
-        x1 = torch.tensor(create_patches(x1.permute(0, 2, 3, 1).detach().numpy(), patch_shape)).flatten(2)
+        x1 = torch.tensor(self.create_patches(x1.permute(0, 2, 3, 1).detach().numpy(), self.patch_shape)).flatten(2)
         x1 = self.mha1(x1)
 
         x2 = self.conv2(x)
-        x2 = torch.tensor(create_patches(x2.permute(0, 2, 3, 1).detach().numpy(), patch_shape)).flatten(2)
+        x2 = torch.tensor(self.create_patches(x2.permute(0, 2, 3, 1).detach().numpy(), self.patch_shape)).flatten(2)
         x2 = self.mha2(x2)
         
         x3 = self.conv3(x)
-        x3 = torch.tensor(create_patches(x3.permute(0, 2, 3, 1).detach().numpy(), patch_shape)).flatten(2)
+        x3 = torch.tensor(self.create_patches(x3.permute(0, 2, 3, 1).detach().numpy(), self.patch_shape)).flatten(2)
         x3 = self.mha3(x3)
 
         x = x1 + x2 + x3
         x = x.reshape((input_shape[0],) + (self.out_channels,) + input_shape[2:])
 
-        x = self.conv_out(x).flatten()
-        x = self.fc(x)
+        x = self.conv_out(x)
 
         return x
