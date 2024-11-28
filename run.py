@@ -13,8 +13,9 @@ import torchvision
 from torch.utils.data import random_split
 from torchsummary import summary
 from models.Model import Model
-# from models.experiments.SingleBranch1x1Model import MyModel
-from models.experiments.SingleBranch3x3Model import MyModel
+from models.experiments.SingleBranch1x1Model import MyModel as SB1M
+from models.experiments.SingleBranch3x3Model import MyModel as SB3M
+from models.experiments.SingleBranch3113Model import MyModel as SB3113M
 
 if __name__ == '__main__':
     config = utils.get_config()
@@ -60,7 +61,13 @@ if __name__ == '__main__':
     if model_name == "vgg16":
         train_model = VGG16(pretrained=True)
     if model_name == "model":
-        train_model = MyModel(patch_shape=16, d_model=192, num_heads=12)
+        train_model = Model(patch_shape=16, d_model=192, num_heads=12)
+    if model_name == "sb1m":
+        train_model = SB1M(patch_shape=16, d_model=192, num_heads=12)
+    if model_name == "sb3m":
+        train_model = SB3M(patch_shape=16, d_model=192, num_heads=12)
+    if model_name == "sb3113m":
+        train_model = SB3113M(patch_shape=16, d_model=192, num_heads=12)
     if saved_weights:
         print("Loading Saved Weights:", saved_weights)
         train_model.load_state_dict(torch.load(saved_weights).state_dict())
