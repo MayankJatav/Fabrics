@@ -90,7 +90,7 @@ class MyModel(nn.Module):
         x = self.mhab3(x)
         x = self.mhab4(x)
 
-        x = x.reshape((8, 8, 384, 384))
+        x = x.reshape((x.shape[0], 8, 384, 384))
 
         x = self.conv3(x)
         x = self.maxpool1(x)
