@@ -48,9 +48,9 @@ class ConvolutionalBlockIn(nn.Module):
         return x
 
 class ConvolutionalBlockOut(nn.Module):
-    def __init__(self):
+    def __init__(self, in_channels):
         super(ConvolutionalBlockOut, self).__init__()
-        self.conv1 = nn.Conv2d(1, 8, 3)
+        self.conv1 = nn.Conv2d(in_channels, 8, 3)
         self.conv2 = nn.Conv2d(8, 16, 3)
         self.conv3 = nn.Conv2d(16, 32, 3)
         self.conv4 = nn.Conv2d(32, 64, 3)
@@ -72,9 +72,9 @@ class ConvolutionalBlockOut(nn.Module):
 class MultiHeadAttentionBlock(nn.Module):
     def __init__(self, patch_shape, in_channels, d_model, num_heads):
         super(MultiHeadAttentionBlock, self).__init__()
-        self.linear_in = nn.Linear(patch_shape[0]*patch_shape[1]*in_channels, d_model)
+        self.linear_in = nn.Linear(patch_shape*patch_shape*in_channels, d_model)
         self.mha = MultiHeadAttention(d_model, num_heads)
-        self.linear_out = nn.Linear(d_model, patch_shape[0]*patch_shape[1]*in_channels)
+        self.linear_out = nn.Linear(d_model, patch_shape*patch_shape*in_channels)
 
     def forward(self, x):
         x = self.linear_in(x)
@@ -97,39 +97,28 @@ class Model(nn.Module):
         self.mha2 = MultiHeadAttentionBlock(self.patch_shape, out_channels, d_model, num_heads)
         self.mha3 = MultiHeadAttentionBlock(self.patch_shape, out_channels, d_model, num_heads)
 
-        self.conv_out = ConvolutionalBlockOut()
+        self.conv_out = ConvolutionalBlockOut(in_channels = out_channels)
 
         self.num_heads = num_heads
 
-    def create_patches(self, image, shape):
-        shape = (image.shape[0],) + shape + (image.shape[3],)
-        patches = patchify(image, shape, step=shape[1])[0]
-
-        p = [[] for i in range(shape[0])]
-        for i in patches:
-            for j in i:
-                j = j[0]
-                for k in range(shape[0]):
-                    p[k].append(j[k])
-
-        return p
+    def create_patches(self, tensor, patch_size):
+        patches = tensor.unfold(2, patch_size, patch_size).unfold(3, patch_size, patch_size)
+        patches = patches.contiguous().view(tensor.size(0), tensor.size(1), -1, patch_size, patch_size).permute(0, 2, 1, 3, 4)
+        return patches
     
     def forward(self, x):
         input_shape = x.shape
-
-        device = x.device
-        x = x / torch.max(x)
         
         x1 = self.conv1(x)
-        x1 = torch.tensor(self.create_patches(x1.permute(0, 2, 3, 1).cpu().detach().numpy(), self.patch_shape)).flatten(2).to(device)
+        x1 = self.create_patches(x1, self.patch_shape).flatten(2)
         x1 = self.mha1(x1)
 
         x2 = self.conv2(x)
-        x2 = torch.tensor(self.create_patches(x2.permute(0, 2, 3, 1).cpu().detach().numpy(), self.patch_shape)).flatten(2).to(device)
+        x2 = self.create_patches(x2, self.patch_shape).flatten(2)
         x2 = self.mha2(x2)
         
         x3 = self.conv3(x)
-        x3 = torch.tensor(self.create_patches(x3.permute(0, 2, 3, 1).cpu().detach().numpy(), self.patch_shape)).flatten(2).to(device)
+        x3 = self.create_patches(x3, self.patch_shape).flatten(2)
         x3 = self.mha3(x3)
 
         x = x1 + x2 + x3
