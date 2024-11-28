@@ -58,7 +58,7 @@ if __name__ == '__main__':
     if model_name == "vgg16":
         train_model = VGG16(pretrained=True)
     if model_name == "model":
-        train_model = Model(patch_shape=(16, 16), in_channels=3, out_channels=1, d_model=96, num_heads=3)
+        train_model = Model(patch_shape=16, in_channels=3, out_channels=1, d_model=96, num_heads=3)
     if saved_weights:
         print("Loading Saved Weights:", saved_weights)
         train_model.load_state_dict(torch.load(saved_weights).state_dict())
