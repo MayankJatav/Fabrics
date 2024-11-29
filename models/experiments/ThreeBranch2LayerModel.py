@@ -105,12 +105,13 @@ class MyModel(nn.Module):
         self.mb2 = ModelBlock(patch_shape=patch_shape, d_model=d_model, num_heads=num_heads)
 
         self.fc = nn.Linear(442368, 3)
+        self.softmax = nn.Softmax()
 
     def forward(self, x):
 
         x = self.mb1(x)
         x = self.mb2(x).flatten(1)
         x = self.fc(x)
-        print(x.shape)
+        x = self.softmax(x)
 
         return x
