@@ -14,12 +14,8 @@ class VITModel(torch.nn.Module):
         )
         self.feature_extractor = self.mobilenet.features
         self.classification = torch.nn.Sequential(
-            torch.nn.Linear(1280, 320),
-            torch.nn.ReLU(),
-            torch.nn.Linear(320, 80),
-            torch.nn.ReLU(),
-            torch.nn.Linear(80, 21),
-            torch.nn.Softmax(),
+            torch.nn.Linear(1280, 3),
+            torch.nn.Softmax()
         )
 
     def forward(self, input):
