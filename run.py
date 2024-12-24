@@ -34,15 +34,13 @@ if __name__ == '__main__':
         ])
 
     if dataset_name.lower() == "FabricsDataset".lower():
-        dataset = dataloader.FabricDataset(dataset_path, transform)
+        train_loader, val_loader = dataloader.get_fabrics_dataset_dataloder(dataset_path, transform, train_size, val_size, batch_size)
     elif dataset_name.lower() == "FabricsOCTDataset".lower():
-        dataset = dataloader.FabricOCTDataset(dataset_path, transform)
+        train_loader, val_loader = dataloader.get_fabrics_dataset_dataloder(dataset_path, transform, train_size, val_size, batch_size)
+    elif dataset_name.lower() == "TextileNetDataset".lower():
+        train_loader, val_loader = dataloader.get_fabrics_dataset_dataloder(dataset_path, transform, train_size, val_size, batch_size)
     else:
         assert False, "Dataset name should be either FabricsDataset or FabricsOCTDataset"
-    train_dataset, val_dataset, test_dataset = random_split(dataset, [train_size, val_size, test_size])
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
-    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
     
     if model_name == "mobilenet":
         train_model = MobileNetModel(pretrained=True)
@@ -51,8 +49,7 @@ if __name__ == '__main__':
     if saved_weights:
         print("Loading Saved Weights:", saved_weights)
         train_model.load_state_dict(torch.load(saved_weights).state_dict())
-    # print(train_model)
-    # summary(train_model, (3, model_input_shape[0], model_input_shape[1]))
+
     loss_fn = torch.nn.L1Loss()
     optimizer = torch.optim.SGD(train_model.parameters(), lr=learning_rate)
 
