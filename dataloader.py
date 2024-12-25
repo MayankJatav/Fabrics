@@ -77,9 +77,19 @@ class TextileNetDataset(Dataset):
         image = image / torch.max(image)
         label = [0, 0, 0]
         className = self.files[idx].split('/')[-2]
-        label[class_to_index(className)] = 1
+        label[self.class_to_index(className)] = 1
         label = torch.Tensor(label)
         return image, label
+    
+    def class_to_index(self, class_name):
+        if class_name == "denim":
+            return 0
+        elif class_name == "satin":
+            return 1
+        elif class_name == "knit":
+            return 2
+        else:
+            assert False, "Invalid Class Name For Fabric"
 
 def get_fabrics_dataset_dataloder(dataset_path, transform, train_size, val_size, batch_size):
     dataset = FabricDataset(dataset_path, transform)
