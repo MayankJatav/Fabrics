@@ -62,7 +62,7 @@ if __name__ == '__main__':
     if model_name == "vgg16":
         train_model = VGG16(pretrained=True)
     if model_name == "model":
-        train_model = Model(patch_shape=16, d_model=192, num_heads=12)
+        train_model = Model()
     if model_name == "sb1m":
         train_model = SB1M(patch_shape=16, d_model=192, num_heads=12)
     if model_name == "sb3m":
