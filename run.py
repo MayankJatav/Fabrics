@@ -10,7 +10,6 @@ from results import Results as results
 from utils import Utilities as utils
 import torch
 import torchvision
-from torch.utils.data import random_split
 from torchsummary import summary
 from models.Model import Model
 from models.experiments.SingleBranch1x1Model import MyModel as SB1M
