@@ -89,15 +89,15 @@ def get_fabrics_dataset_dataloder(dataset_path, transform, train_size, val_size,
     return train_loader, val_loader
     
 def get_fabrics_oct_dataset_dataloder(dataset_path, transform, train_size, val_size, batch_size):
-    dataset = FabricDataset(dataset_path, transform)
+    dataset = FabricOCTDataset(dataset_path, transform)
     train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     return train_loader, val_loader
     
 def get_textilenet_dataset_dataloder(dataset_path, transform, train_size, val_size, batch_size):
-    train_dataset = FabricDataset(dataset_path + "/train", transform)
-    val_dataset = FabricDataset(dataset_path + "/test", transform)
+    train_dataset = TextileNetDataset(dataset_path + "/train", transform)
+    val_dataset = TextileNetDataset(dataset_path + "/test", transform)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     return train_loader, val_loader
