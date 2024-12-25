@@ -11,7 +11,7 @@ class VGG16(torch.nn.Module):
         self.model = models.vgg16(pretrained=pretrained)
         num_features = self.model.classifier[6].in_features
         self.model.classifier[6] = torch.nn.Sequential(
-            torch.nn.Linear(num_features, 5),
+            torch.nn.Linear(num_features, 3),
             torch.nn.Softmax()
         )
 

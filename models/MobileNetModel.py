@@ -7,7 +7,7 @@ class MobileNetModel(torch.nn.Module):
         self.mobilenet = models.mobilenet_v2(pretrained=pretrained)
         self.feature_extractor = self.mobilenet.features
         self.classification = torch.nn.Sequential(
-            torch.nn.Linear(1280, 5),
+            torch.nn.Linear(1280, 3),
             torch.nn.Softmax()
         )
 
