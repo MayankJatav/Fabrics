@@ -7,7 +7,6 @@ from results import Results as results
 from utils import Utilities as utils
 import torch
 import torchvision
-from torch.utils.data import random_split
 from torchsummary import summary
 
 if __name__ == '__main__':
