@@ -38,4 +38,5 @@ class Model(nn.Module):
         x2 = x2.flatten(1)
         x = torch.cat((x1, x2), dim=1)
         x = self.fc(x)
+        x = torch.nn.functional.softmax(x)
         return x
