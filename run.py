@@ -35,9 +35,9 @@ if __name__ == '__main__':
     if dataset_name.lower() == "FabricsDataset".lower():
         train_loader, val_loader = dataloader.get_fabrics_dataset_dataloder(dataset_path, transform, train_size, val_size, batch_size)
     elif dataset_name.lower() == "FabricsOCTDataset".lower():
-        train_loader, val_loader = dataloader.get_fabrics_dataset_dataloder(dataset_path, transform, train_size, val_size, batch_size)
+        train_loader, val_loader = dataloader.get_fabrics_oct_dataset_dataloder(dataset_path, transform, train_size, val_size, batch_size)
     elif dataset_name.lower() == "TextileNetDataset".lower():
-        train_loader, val_loader = dataloader.get_fabrics_dataset_dataloder(dataset_path, transform, train_size, val_size, batch_size)
+        train_loader, val_loader = dataloader.get_textilenet_dataset_dataloder(dataset_path, transform, train_size, val_size, batch_size)
     else:
         assert False, "Dataset name should be either FabricsDataset or FabricsOCTDataset"
     
