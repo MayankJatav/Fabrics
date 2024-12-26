@@ -1,28 +1,54 @@
 from torchvision.models import vit_b_16
 import torch
 from torch import nn
+import math
+import torch.nn.functional as F
 
+class ConvSamePadding(nn.Module):
+    def __init__(self, input_size, in_channels, out_channels, kernel_size, stride):
+        super(ConvSamePadding, self).__init__()
+        self.input_size = input_size
+        padding = self.calculate_same_padding(input_size, kernel_size, stride)
+        self.conv = nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding)
+        
+    def calculate_same_padding(self, input_size, kernel_size, stride): 
+        return math.ceil((stride * (input_size - 1) + kernel_size - input_size) / 2)
+    
+    def forward(self, x):
+        assert x.shape[2] == x.shape[3] == self.input_size
+        return self.conv(x)
+    
 class CNN(nn.Module):
     def __init__(self):
         super(CNN, self).__init__()
-        self.cnn1 = nn.Conv2d(3, 8, 3, stride=3)
-        self.cnn2 = nn.Conv2d(8, 16, 3, stride=3)
-        self.cnn3 = nn.Conv2d(16, 32, 3, stride=3)
-        self.cnn4 = nn.Conv2d(32, 64, 3, stride=3)
-        self.cnn5 = nn.Conv2d(64, 128, 2, stride=1)
+        # self.cnn1 = nn.Conv2d(3, 8, 3, stride=3, padding=1)
+        # self.cnn2 = nn.Conv2d(8, 16, 3, stride=3, padding=1)
+        # self.cnn3 = nn.Conv2d(16, 32, 3, stride=3, padding=1)
+        # self.cnn4 = nn.Conv2d(32, 64, 3, stride=3, padding=1)
+        # self.cnn5 = nn.Conv2d(64, 128, 2, stride=1, padding=1)
+        self.cnn1 = ConvSamePadding(input_size=224, in_channels=3, out_channels=8, kernel_size=3, stride=3)
+        self.cnn2 = ConvSamePadding(input_size=74, in_channels=8, out_channels=16, kernel_size=3, stride=3)
+        self.cnn3 = ConvSamePadding(input_size=24, in_channels=16, out_channels=32, kernel_size=3, stride=3)
+        self.cnn4 = ConvSamePadding(input_size=8, in_channels=32, out_channels=64, kernel_size=3, stride=3)
+        self.cnn5 = ConvSamePadding(input_size=2, in_channels=64, out_channels=128, kernel_size=3, stride=3)
         self.relu = nn.ReLU()
 
     def forward(self, x):
         x = self.cnn1(x)
         x = self.relu(x)
+        x = F.max_pool2d(x, kernel_size=3)
         x = self.cnn2(x)
         x = self.relu(x)
+        x = F.max_pool2d(x, kernel_size=3)
         x = self.cnn3(x)
         x = self.relu(x)
+        x = F.max_pool2d(x, kernel_size=3)
         x = self.cnn4(x)
         x = self.relu(x)
+        x = F.max_pool2d(x, kernel_size=3)
         x = self.cnn5(x)
         x = self.relu(x)
+        x = F.max_pool2d(x, kernel_size=2)
         return x
 
 
