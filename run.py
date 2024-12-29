@@ -42,13 +42,17 @@ if __name__ == '__main__':
         ])
 
     if dataset_name.lower() == "FabricsDataset".lower():
-        train_loader, val_loader = dataloader.get_fabrics_dataset_dataloder(dataset_path, transform, train_size, val_size, batch_size)
+        train_loader, val_loader, test_loader = dataloader.get_fabrics_dataset_dataloder(dataset_path, transform, train_size, val_size, batch_size)
     elif dataset_name.lower() == "FabricsOCTDataset".lower():
-        train_loader, val_loader = dataloader.get_fabrics_oct_dataset_dataloder(dataset_path, transform, train_size, val_size, batch_size)
+        train_loader, val_loader, test_loader = dataloader.get_fabrics_oct_dataset_dataloder(dataset_path, transform, train_size, val_size, batch_size)
     elif dataset_name.lower() == "TextileNetDataset".lower():
-        train_loader, val_loader = dataloader.get_textilenet_dataset_dataloder(dataset_path, transform, train_size, val_size, batch_size)
+        train_loader, val_loader, test_loader = dataloader.get_textilenet_dataset_dataloder(dataset_path, transform, train_size, val_size, batch_size)
     else:
         assert False, "Dataset name should be either FabricsDataset or FabricsOCTDataset"
+    
+    torch.save(train_loader, f"{current_run_dir}/train_loader")
+    torch.save(val_loader, f"{current_run_dir}/val_loader")
+    torch.save(test_loader, f"{current_run_dir}/test_loader")
     
     if model_name == "mobilenet":
         train_model = MobileNetModel(pretrained=True)
@@ -89,5 +93,15 @@ if __name__ == '__main__':
                                     save_model_file=f"{current_run_dir}/{save_model_file}"
                                     )
     result = train_runner.train()
-
     results.save_acc_loss_graph(f"{current_run_dir}/{results_image}", *result)
+    
+    test_runner = trainer.Trainer(train_model,
+                                    loss_fn, 
+                                    optimizer, 
+                                    epochs, 
+                                    train_loader, 
+                                    test_loader, 
+                                    log_results_file=f"{current_run_dir}/{results_file}",
+                                    save_model_file=f"{current_run_dir}/{save_model_file}"
+                                    )
+    result = test_runner.validate_one_epoch()
