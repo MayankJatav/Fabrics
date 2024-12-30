@@ -10,6 +10,7 @@ class TextileNetModel(torch.nn.Module):
     def __init__(self, model, pretrained=True):
         super(TextileNetModel, self).__init__()
         assert model is not None and model != '', 'Model must be provided.'
+        # Input Image size for Resnet101 is 299 and for rest it is 244
         if model == "vgg16":
             self.model = torchvision.models.vgg16(pretrained=pretrained)
             num_in_features = self.model.classifier[0].in_features
@@ -29,7 +30,7 @@ class TextileNetModel(torch.nn.Module):
         elif model == "convnextbase":
             self.model = torchvision.models.convnext_base(pretrained=pretrained)
             num_in_features = self.model.classifier[2].in_features
-            self.model.classifier = self.get_custom_layers(num_in_features)
+            self.model.classifier = torch.nn.Sequential(torch.nn.Flatten(1), *self.get_custom_layers(num_in_features))
         else:
             assert False, "Model must be one of 'vgg16', 'resnet101', 'inceptionv3', 'mobilenetv2' or 'convnextbase'."
 
