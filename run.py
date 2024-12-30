@@ -40,9 +40,9 @@ if __name__ == '__main__':
         ])
 
     if dataset_name.lower() == "FabricsDataset".lower():
-        dataset = dataloader.FabricDataset(dataset_path, transform)
+        dataset = dataloader.FabricDataset(dataset_path, transform, preprocess=True)
     elif dataset_name.lower() == "FabricsOCTDataset".lower():
-        dataset = dataloader.FabricOCTDataset(dataset_path, transform)
+        dataset = dataloader.FabricDataset(dataset_path, transform)
     else:
         assert False, "Dataset name should be either FabricsDataset or FabricsOCTDataset"
     train_dataset, val_dataset = random_split(dataset, [train_size, val_size])

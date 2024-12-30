@@ -8,8 +8,9 @@ import cv2
 import numpy as np
 
 class FabricDataset(Dataset):
-    def __init__(self, path, transform=None):
+    def __init__(self, path, transform=None, preprocess=False):
         # Initialization Code Here
+        self.preprocess = preprocess
         self.transform = transform
         self.files = glob.glob(path+"/**/**/*.png", recursive=True)
         self.files = [s.replace("\\", "/") for s in self.files]
@@ -21,7 +22,8 @@ class FabricDataset(Dataset):
     def __getitem__(self, idx):
         # Return the data at index idx
         image = Image.open(self.files[idx])
-        image = self.preprocess_image(image)
+        if self.preprocess:
+            image = self.preprocess_image(image)
         if self.transform:
             image = self.transform(image)
         image = image / torch.max(image)
